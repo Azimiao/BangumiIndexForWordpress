@@ -3,7 +3,7 @@
  * Plugin Name: Bangumi Index
  * Plugin URI: https://www.azimiao.com
  * Description: 一个WP用的追番页面插件，使用短代码[bangumi]即可显示相应目录 (前端特效：<a href="//wikimoe.com">广树</a>)
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: 野兔#梓喵出没
  * Author URI: https://www.azimiao.com
  */
@@ -32,6 +32,7 @@ class ZM_Bangumi{
             $options['bangumiPwd'] = '';
             $options['isJQuery'] = false;
             $options["color"] = "#ff8c83";
+            $options["isCache"] = false;
             update_option('zm_bangumi', $options);
         }
         return $options;
@@ -47,11 +48,25 @@ class ZM_Bangumi{
             $options['bangumiAccount'] = stripslashes($_POST['bangumiAccount']);
             $options['bangumiPwd'] = stripslashes($_POST['bangumiPwd']);
             if ($_POST['isJQuery']) { $options['isJQuery'] = (bool)true; } else { $options['isJQuery'] = (bool)false; }
+            if ($_POST['isCache']) { $options['isCache'] = (bool)true; } else { $options['isCache'] = (bool)false; }
             echo "<div id='message' class='updated fade'><p><strong>数据已更新</strong></p></div>";
             $options["color"] = stripslashes($_POST["color"]);
+            update_option('zm_bangumi', $options);
+        }else if(isset($_POST["zm_bangumi_clear"])){
+            //删除
+            $cachePath = __DIR__ . "/BangumiCache/";
+            //echo $cachePath;
+            $allCaches = scandir($cachePath);
+            foreach($allCaches as $val){
+                if($val != "." && $val != "..")
+                {
+                    if(!is_dir($cachePath.$val)){
+                        unlink($cachePath.$val);
+                    }
+                }
+            }
+            echo "<div id='message' class='error fade'><p><strong>缓存已清除</strong></p></div>";
         }
-        update_option('zm_bangumi', $options);
-
     }
 
     //输出后台页面
@@ -160,6 +175,10 @@ class ZM_Bangumi{
                     <td><label><input name="isJQuery" type="checkbox" value="checkbox" <?php if($options['isJQuery']) echo "checked='checked'"; ?> /> 我需要</label></td>
                 </tr>
 
+                <tr>
+                    <td>是否开启每日缓存?</td>
+                    <td><label><input name="isCache" type="checkbox" value="checkbox" <?php if($options['isCache']) echo "checked='checked'"; ?> /> 开启</label></td>
+                </tr>
 
                 </table>
             </div>
@@ -171,7 +190,8 @@ class ZM_Bangumi{
 
         <!-- 提交按钮 -->
             <p class="submit">
-                <input type="submit" name="zm_bangumi_save" value="提交" />
+                <input type="submit" name="zm_bangumi_save" value="保存信息" />&nbsp;
+                <input type="submit" name="zm_bangumi_clear" value="清空缓存" />
             </p>
         </div>
         </form>
@@ -185,7 +205,6 @@ class ZM_Bangumi{
 
         //TODO 不必要的一次查库，需要优化
         $options = $this->getOption();
-        $path = plugins_url('',__FILE__);
 
         if((bool)$options["isJQuery"]){
             echo "<script src='//libs.baidu.com/jquery/1.8.3/jquery.min.js'></script>";
@@ -202,7 +221,7 @@ class ZM_Bangumi{
             
         }
         //样式
-        echo '<link rel="stylesheet" type="text/css" href="' . $path . '/css/css.css" />';
+        echo '<link rel="stylesheet" type="text/css" href="' . plugins_url('css/css.css',__FILE__) . ' " />';
         echo '<div id="bangumiBody">
         <div class="bangumi_loading">
         <div class="loading-anim">
@@ -233,20 +252,18 @@ class ZM_Bangumi{
     <div style="clear:both"></div>';
     echo "
     <script>
-    setTimeout(function(){
-        jQuery.ajax({
-            type: 'GET',
-            url: '" . admin_url('admin-ajax.php') .  "',
-            data:{action:'GetBangumiData'},
-            success: function(res) {
-                $('#bangumiBody').empty().append(res);
+            jQuery.ajax({
+                type: 'GET',
+                url: '" . admin_url('admin-ajax.php') .  "',
+                data:{action:'GetBangumiData'},
+                success: function(res) {
+                    $('#bangumiBody').empty().append(res);
 
-            },
-            error:function(){
-                $('#bangumiBody').empty().text('加载失败');
-            }
-        });
-    },500)
+                },
+                error:function(){
+                    $('#bangumiBody').empty().text('加载失败');
+                }
+            });
     </script>
 
     ";

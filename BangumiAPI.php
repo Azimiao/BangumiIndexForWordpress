@@ -93,9 +93,12 @@
             return BangumiAPI::curl_get_contents($this->collectionApi);
         }
         //格式化收藏
-        public function ParseCollection()
+        public function ParseCollection($content = null)
+        {
+            if($content == null || !$content)
             {
-            $content = $this->GetCollection();
+                $content = $this->GetCollection();
+            }
             if ($content == null || $content == "") {
             echo "<br>ParseCollection:获取失败";
             return;
@@ -119,6 +122,7 @@
             $this->myCollection[$index++] = $value;
             }
         }
+
         //获取详细进度
         public function GetProgress($_subjectID)
         {
@@ -245,15 +249,54 @@
     }
         //ajax处理函数
         function GetBangumiData(){
-        
             $BangumiOptions = get_option('zm_bangumi');
             if(is_array($BangumiOptions) && $BangumiOptions["bangumiAccount"] && $BangumiOptions["bangumiPwd"]){
                 $userId = $BangumiOptions["bangumiAccount"];
                 $password = $BangumiOptions["bangumiPwd"];
+                $isCache = (bool)$BangumiOptions["isCache"];
+
                 $bangum = BangumiAPI::GetInstance();
                 $bangum->init($userId,$password);
-                $bangum->ParseCollection();
+
+                if($isCache){
+                    $cachePath = __DIR__ . "/BangumiCache/";//缓存文件夹
+                    $nowCache = date("Y-m-d") . ".json";//缓存文件名
+                    $fullPath = $cachePath . $nowCache;
+                    $content = null;
+                    if(is_file($fullPath)){
+                        //echo "有缓存<br>";
+                        $myfile = fopen($fullPath,"r");
+                        $content = fread($myfile,filesize($fullPath));
+                        fclose($myfile);
+                    }else{
+                        //echo "开启了缓存，但未缓存<br>";
+                        //缓存文件夹不存在
+                        if(!is_dir($cachePath))
+                        {
+                            mkdir ($cachePath,0755,true);
+                        }
+                        //删除之前存在的缓存
+                        
+                        $allCaches = scandir($cachePath);
+                        foreach($allCaches as $val){
+                            if($val != "." && $val != "..")
+                            {
+                                if(!is_dir($cachePath.$val)){
+                                    unlink($cachePath.$val);
+                                }
+                            }
+                        }
+
+                        $myfile = fopen($fullPath, "w");
+                        $content = $bangum->GetCollection();
+                        fwrite($myfile,$content);
+                        fclose($myfile);
+                    }
+                }
+                $bangum->ParseCollection($content);
                 $bangum->PrintCollecion(true);
+                
+
             }else{
                 echo "<h1>是不是忘记在后台填写Bangumi用户名与密码呢？</h1>";
             }
