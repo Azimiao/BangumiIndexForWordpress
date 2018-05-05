@@ -3,7 +3,7 @@
  * Plugin Name: Bangumi Index
  * Plugin URI: https://www.azimiao.com
  * Description: 一个WP用的追番页面插件，使用短代码[bangumi]即可显示相应目录 (前端特效：<a href="//wikimoe.com">广树</a>)
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: 野兔#梓喵出没
  * Author URI: https://www.azimiao.com
  */
@@ -33,6 +33,7 @@ class ZM_Bangumi{
             $options['isJQuery'] = false;
             $options["color"] = "#ff8c83";
             $options["isCache"] = false;
+            $options["isProxy"] = false;
             update_option('zm_bangumi', $options);
         }
         return $options;
@@ -49,6 +50,7 @@ class ZM_Bangumi{
             $options['bangumiPwd'] = stripslashes($_POST['bangumiPwd']);
             if ($_POST['isJQuery']) { $options['isJQuery'] = (bool)true; } else { $options['isJQuery'] = (bool)false; }
             if ($_POST['isCache']) { $options['isCache'] = (bool)true; } else { $options['isCache'] = (bool)false; }
+            if ($_POST["isProxy"]) { $options['isProxy'] = (bool)true; } else { $options['isProxy'] = (bool)false; }
             echo "<div id='message' class='updated fade'><p><strong>数据已更新</strong></p></div>";
             $options["color"] = stripslashes($_POST["color"]);
             update_option('zm_bangumi', $options);
@@ -169,14 +171,17 @@ class ZM_Bangumi{
                     <td>主颜色(Loading及进度条颜色)：</td>
                     <td><label><input  type="color" name="color" rows="1"  value = "<?php echo($options['color']); ?>"></label></td>
                 </tr>
-
+                <tr>
+                    <td>使用<a href="//xjh.me" target="_blank">岁月小筑</a>提供的API接口：</td>
+                    <td><label><input name="isProxy" type="checkbox" value="checkbox" <?php if($options['isProxy']) echo "checked='checked'"; ?> /> 是的，即使它不可用</label></td>
+                </tr>                
                 <tr>
                     <td>是否由本插件引入JQuery库?(无限转圈圈请勾选)</td>
                     <td><label><input name="isJQuery" type="checkbox" value="checkbox" <?php if($options['isJQuery']) echo "checked='checked'"; ?> /> 我需要</label></td>
                 </tr>
 
                 <tr>
-                    <td>是否开启每日缓存?</td>
+                    <td>是否开启每日缓存?(加速MAX)</td>
                     <td><label><input name="isCache" type="checkbox" value="checkbox" <?php if($options['isCache']) echo "checked='checked'"; ?> /> 开启</label></td>
                 </tr>
 

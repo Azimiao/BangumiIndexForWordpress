@@ -50,8 +50,11 @@
             //echo "构造方法";
         }
         //对象属性初始化
-        public function init($_userName,$_passWord)
+        public function init($_userName,$_passWord,$_apiUrl = null)
             {
+            if($_apiUrl){
+                BangumiAPI::$apiUrl = $_apiUrl;
+            }
             if ($_userName == null || $_passWord == null) {
             //程序返回
             echo "初始化参数错误！";
@@ -229,7 +232,8 @@
                 $userId = $BangumiOptions["bangumiAccount"];
                 $password = $BangumiOptions["bangumiPwd"];
                 $isCache = (bool)$BangumiOptions["isCache"];
-
+                $isProxy = (bool)$BangumiOptions["isProxy"];
+                $mAPI = ($isProxy ? "http://api.bgm.atkoi.cn" : null);
                 $bangum = BangumiAPI::GetInstance();
                 
 
@@ -251,7 +255,7 @@
                         {
                             mkdir ($cachePath,0755,true);
                         }
-                        $bangum->init($userId,$password);
+                        $bangum->init($userId,$password,$mAPI);
                         //删除之前存在的缓存
                         $allCaches = scandir($cachePath);
                         foreach($allCaches as $val){
@@ -269,7 +273,7 @@
                         fclose($myfile);
                     }
                 }else{
-                    $bangum->init($userId,$password);
+                    $bangum->init($userId,$password,$mAPI);
                 }
                 $bangum->ParseCollection($content);
                 $bangum->PrintCollecion(true);
