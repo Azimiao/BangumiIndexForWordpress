@@ -211,6 +211,9 @@
         private static function curl_get_contents($_url)
         {
             $myCurl = curl_init($_url);
+            curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0); //强制协议为1.0
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array("Expect:")); //头部要送出'Expect: '
+            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 ); //强制使用IPV4协议解析域名
             //不验证证书
             curl_setopt($myCurl, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($myCurl, CURLOPT_SSL_VERIFYHOST, false);
@@ -226,6 +229,9 @@
         private static function curl_post_contents($_url,$_postdata)
         {
             $myCurl = curl_init($_url);
+            curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0); //强制协议为1.0
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array("Expect:")); //头部要送出'Expect: '
+            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 ); //强制使用IPV4协议解析域名
             //不验证证书
             curl_setopt($myCurl, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($myCurl, CURLOPT_SSL_VERIFYHOST, false);
