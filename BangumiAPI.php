@@ -123,41 +123,16 @@
             }
         }
 
-        //获取详细进度
-        public function GetProgress($_subjectID)
-        {
-            if ($this->authEncode == "" || $this->userID == "") {
-            return null;
-            }
-            $progressApi = BangumiAPI::$apiUrl . "/user/" . $this->userID . "/progress?subject_id=". $_subjectID . "&source=" . self::$appName . "&auth=" . authEncode;
-            $content = BangumiAPI::curl_get_contents($progressApi);
-            //print_r($content);
-            return $content;
-        }
-        public function ParseProgress($_subjectID)
-        {
-            $content = $this->GetProgress($_subjectID);
-            //不在收藏或没看过
-            if ($content == "null") {
-            return 0;
-            }
-            //在收藏中，没看过
-            if ($content == "") {
-            return 0;
-            }
-            $progressValue = json_decode($content);
-            //返回剧集观看详细进度
-            return $progressValue;
-        }
+
         //打印收藏
         public function PrintCollecion($flag = true)
         {
             if ($this->myCollection == null) {
-            $this->ParseCollection();
+                $this->ParseCollection();
             }
             switch ($flag) {
             case true:
-                            if (sizeof($this->myCollection) == 0 || $this->myCollection == null) {
+                if (sizeof($this->myCollection) == 0 || $this->myCollection == null) {
                 echo "还没有记录哦~";
                 return;
             }
@@ -256,7 +231,7 @@
                 $isCache = (bool)$BangumiOptions["isCache"];
 
                 $bangum = BangumiAPI::GetInstance();
-                $bangum->init($userId,$password);
+                
 
                 if($isCache){
                     $cachePath = __DIR__ . "/BangumiCache/";//缓存文件夹
@@ -271,12 +246,13 @@
                     }else{
                         //echo "开启了缓存，但未缓存<br>";
                         //缓存文件夹不存在
+
                         if(!is_dir($cachePath))
                         {
                             mkdir ($cachePath,0755,true);
                         }
+                        $bangum->init($userId,$password);
                         //删除之前存在的缓存
-                        
                         $allCaches = scandir($cachePath);
                         foreach($allCaches as $val){
                             if($val != "." && $val != "..")
@@ -292,6 +268,8 @@
                         fwrite($myfile,$content);
                         fclose($myfile);
                     }
+                }else{
+                    $bangum->init($userId,$password);
                 }
                 $bangum->ParseCollection($content);
                 $bangum->PrintCollecion(true);
