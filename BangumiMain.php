@@ -252,7 +252,7 @@ class ZM_Bangumi{
     <div style="clear:both"></div>';
     echo "
     <script>
-            jQuery.ajax({
+            $.ajax({
                 type: 'GET',
                 url: '" . admin_url('admin-ajax.php') .  "',
                 data:{action:'GetBangumiData'},
