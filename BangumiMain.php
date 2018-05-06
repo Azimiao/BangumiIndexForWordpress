@@ -257,18 +257,20 @@ class ZM_Bangumi{
     <div style="clear:both"></div>';
     echo "
     <script>
-            $.ajax({
-                type: 'GET',
-                url: '" . admin_url('admin-ajax.php') .  "',
-                data:{action:'GetBangumiData'},
-                success: function(res) {
-                    $('#bangumiBody').empty().append(res);
+    jQuery(document).ready(function($){
+        $.ajax({
+            type: 'GET',
+            url: '" . admin_url('admin-ajax.php') .  "',
+            data:{action:'GetBangumiData'},
+            success: function(res) {
+                $('#bangumiBody').empty().append(res);
 
-                },
-                error:function(){
-                    $('#bangumiBody').empty().text('加载失败');
-                }
-            });
+            },
+            error:function(){
+                $('#bangumiBody').empty().text('加载失败');
+            }
+        });
+    });
     </script>
 
     ";
