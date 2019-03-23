@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Bangumi Index
+ * Plugin Name: ZM_Bangumi_Index
  * Plugin URI: https://www.azimiao.com
- * Description: 一个WP用的追番页面插件，使用短代码[bangumi]即可显示相应目录 (前端特效：<a href="//wikimoe.com">广树</a>)
- * Version: 1.0.4
+ * Description: 一个WP用的追番页面插件，使用短代码[bangumi]即可显示相应目录
+ * Version: 2.0.0b1
  * Author: 野兔#梓喵出没
  * Author URI: https://www.azimiao.com
  */
@@ -34,6 +34,8 @@ class ZM_Bangumi{
             $options["color"] = "#ff8c83";
             $options["isCache"] = false;
             $options["isProxy"] = false;
+            $options["singleItemNum"] = 6;
+            $options["singleNavNum"] = 3;
             update_option('zm_bangumi', $options);
         }
         return $options;
@@ -48,12 +50,32 @@ class ZM_Bangumi{
         if(isset($_POST['zm_bangumi_save'])) {
             $options['bangumiAccount'] = stripslashes($_POST['bangumiAccount']);
             $options['bangumiPwd'] = stripslashes($_POST['bangumiPwd']);
-            if ($_POST['isJQuery']) { $options['isJQuery'] = (bool)true; } else { $options['isJQuery'] = (bool)false; }
-            if ($_POST['isCache']) { $options['isCache'] = (bool)true; } else { $options['isCache'] = (bool)false; }
-            if ($_POST["isProxy"]) { $options['isProxy'] = (bool)true; } else { $options['isProxy'] = (bool)false; }
-            echo "<div id='message' class='updated fade'><p><strong>数据已更新</strong></p></div>";
+            if ($_POST['isJQuery']) { 
+                $options['isJQuery'] = (bool)true; } else { $options['isJQuery'] = (bool)false; 
+            }
+            if ($_POST['isCache']) { 
+                $options['isCache'] = (bool)true; } else { $options['isCache'] = (bool)false; 
+            }
+            if ($_POST["isProxy"]) { 
+                $options['isProxy'] = (bool)true; } else { $options['isProxy'] = (bool)false;
+            }
+            if($_POST["singleItemNum"]){
+                $tempItemNum = stripslashes($_POST["singleItemNum"]);
+                if(is_numeric($tempItemNum))
+                {
+                    $options["singleItemNum"] = intval($tempItemNum);
+                }
+            }
+            if($_POST["singleNavNum"]){
+                $tempNavNum = stripslashes($_POST["singleNavNum"]);
+                if(is_numeric($tempNavNum))
+                {
+                    $options["singleNavNum"] = intval($tempNavNum);
+                }
+            }
             $options["color"] = stripslashes($_POST["color"]);
             update_option('zm_bangumi', $options);
+            echo "<div id='message' class='updated fade'><p><strong>数据已更新</strong></p></div>";
         }else if(isset($_POST["zm_bangumi_clear"])){
             //删除
             $cachePath = __DIR__ . "/BangumiCache/";
@@ -144,7 +166,7 @@ class ZM_Bangumi{
         <fieldset>
 
 
-        <legend class="toggle">个人信息</legend>
+        <legend class="toggle">插件配置</legend>
 
 
             <div>
@@ -168,36 +190,61 @@ class ZM_Bangumi{
                 </tr>
 
                 <tr>
-                    <td>主颜色(Loading及进度条颜色)：</td>
+                    <td>主颜色(进度条及标签颜色)：</td>
                     <td><label><input  type="color" name="color" rows="1"  value = "<?php echo($options['color']); ?>"></label></td>
+                </tr>
+                <tr>
+                    <td>单页番剧数量(int)：</td>
+                    <td><label><input  type="number" name="singleItemNum" rows="1"  value = "<?php echo($options['singleItemNum']); ?>"></label></td>
+                </tr>
+                <tr>
+                    <td>单页导航标签数量(若当前页为头尾，数量可能多于该数值)：</td>
+                    <td><label><input  type="number" name="singleNavNum" rows="1"  value = "<?php echo($options['singleNavNum']); ?>"></label></td>
                 </tr>
                 <tr>
                     <td>使用<a href="//xjh.me" target="_blank">岁月小筑</a>提供的API接口：</td>
                     <td><label><input name="isProxy" type="checkbox" value="checkbox" <?php if($options['isProxy']) echo "checked='checked'"; ?> /> 是的，即使它不可用</label></td>
                 </tr>                
                 <tr>
-                    <td>是否由本插件引入JQuery库?(无限转圈圈请勾选)</td>
+                    <td><del>是否由本插件引入JQuery库?</del><span style="color:red">V2.0不再需要JQuery,此选项失效</span></td>
                     <td><label><input name="isJQuery" type="checkbox" value="checkbox" <?php if($options['isJQuery']) echo "checked='checked'"; ?> /> 我需要</label></td>
                 </tr>
 
                 <tr>
-                    <td>是否开启每日缓存?(加速MAX)</td>
+                    <td>是否开启每日缓存?(推荐开启,加速MAX)</td>
                     <td><label><input name="isCache" type="checkbox" value="checkbox" <?php if($options['isCache']) echo "checked='checked'"; ?> /> 开启</label></td>
                 </tr>
-
+                <tr>
+                    <td>插件版本</td>
+                    <td><label><a href="//www.azimiao.com" target="_blank">v2.0.0b1</a></label></td>
+                </tr>
                 </table>
             </div>
 
 
         </fieldset>
 
-
-
         <!-- 提交按钮 -->
-            <p class="submit">
+        <p class="submit">
                 <input type="submit" name="zm_bangumi_save" value="保存信息" />&nbsp;
                 <input type="submit" name="zm_bangumi_clear" value="清空缓存" />
-            </p>
+        </p>
+
+        <fieldset>
+        <legend class="toggle">Bug反馈与联系作者</legend>
+            <div>
+            <table width="800" border="1" class="otakutable">
+                <tr>
+                    <td>邮箱</td>
+                    <td><label><a href="mailto:admin@azimiao.com" target="_blank">admin@azimiao.com</a></label></td>
+                </tr>
+                <tr>
+                    <td>博客</td>
+                    <td><label><a href="//www.azimiao.com" target="_blank">梓喵出没(www.azimiao.com)</a></label></td>
+                </tr>
+            </div>
+        </fieldset>
+
         </div>
         </form>
         <?php
@@ -207,72 +254,67 @@ class ZM_Bangumi{
 
 
     public function outPut($atts,$content = ""){
-
-        //TODO 不必要的一次查库，需要优化
-        $options = $this->getOption();
-
-        if((bool)$options["isJQuery"]){
-            echo "<script src='//libs.baidu.com/jquery/1.8.3/jquery.min.js'></script>";
-        }
-        if($options["color"])
-        {
-            echo "<style>
-            a.bangumItem div.jinduFG,.dot{background-color: " . $options["color"] ." !important; }
-            .loading-anim .border{border: 3px solid " . $options["color"] . ";}</style> ";
-        }else{
-            echo "<style>
-            .loading-anim .border{border: 3px solid #ff8c83;}
-            </style>";
-            
-        }
-        //样式
-        echo '<link rel="stylesheet" type="text/css" href="' . plugins_url('css/css.css',__FILE__) . ' " />';
-        echo '<div id="bangumiBody">
+        //TODO 修改为文件读取形式
+        echo "<script src='" . plugins_url('js/zm_bangumi.js',__FILE__) . " '></script>";
+        echo '<link rel="stylesheet" type="text/css" href="' . plugins_url('css/zm_bangumi.css',__FILE__) . ' " />';
+        echo '<div id="zm_bangumi_content">
         <div class="bangumi_loading">
-        <div class="loading-anim">
-            <div class="border out"></div>
-            <div class="border in"></div>
-            <div class="border mid"></div>
-            <div class="circle">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
+            <div class="loading-anim">
+                <div class="border out"></div>
+                <div class="border in"></div>
+                <div class="border mid"></div>
+                <div class="circle">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <div class="bangumi_loading_text">追番数据加载中...</div>
             </div>
-            <div class="bangumi_loading_text">追番数据加载中...</div>
         </div>
-        </div>
-
-
     </div>
-
-    <div style="clear:both"></div>';
+    <div id="bangumi_nav"><ui id="zm_bangumi_nav"></ui></div>';
     echo "
     <script>
-    jQuery(document).ready(function($){
-        $.ajax({
-            type: 'GET',
-            url: '" . admin_url('admin-ajax.php') .  "',
-            data:{action:'GetBangumiData'},
-            success: function(res) {
-                $('#bangumiBody').empty().append(res);
-
-            },
-            error:function(){
-                $('#bangumiBody').empty().text('加载失败');
+        let xmlhttp;
+        function getBangumiData(){
+            if(window.XMLHttpRequest)
+            {
+                xmlhttp=new XMLHttpRequest();
+            }else{
+                alert('where is my xmlreq?');
+                return;
             }
-        });
-    });
-    </script>
+            xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    if(parseBangumiData)
+                    {   
+                        let bangumiData;
+                        try{
+                            bangumiData = JSON.parse(xmlhttp.responseText);
+                            parseBangumiData(JSON.parse(xmlhttp.responseText));
+                        }catch(e){
+                            console.log(e);
+                        }
 
+                    }
+                }
+            }
+            xmlhttp.open('get','". admin_url('admin-ajax.php') ."?action=GetBangumiData',true);
+            xmlhttp.send();
+        }
+        getBangumiData();
+    </script>
     ";
     }
 }

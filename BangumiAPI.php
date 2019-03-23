@@ -234,14 +234,19 @@
                 $isCache = (bool)$BangumiOptions["isCache"];
                 $isProxy = (bool)$BangumiOptions["isProxy"];
                 $mAPI = ($isProxy ? "http://api.bgm.atkoi.cn" : null);
+                $mainColor = $BangumiOptions["color"];
+                $singleItemNum = $BangumiOptions["singleItemNum"];
+                $singleNavNum = $BangumiOptions["singleNavNum"];
                 $bangum = BangumiAPI::GetInstance();
                 
+                $content = null;
+                $zmBangumiResCode = 200;
 
                 if($isCache){
                     $cachePath = __DIR__ . "/BangumiCache/";//缓存文件夹
                     $nowCache = date("Y-m-d") . ".json";//缓存文件名
                     $fullPath = $cachePath . $nowCache;
-                    $content = null;
+                    //$content = null;
                     if(is_file($fullPath)){
                         //echo "有缓存<br>";
                         $myfile = fopen($fullPath,"r");
@@ -274,14 +279,25 @@
                     }
                 }else{
                     $bangum->init($userId,$password,$mAPI);
+                    $content = $bangum->GetCollection();
                 }
-                $bangum->ParseCollection($content);
-                $bangum->PrintCollecion(true);
                 
-
             }else{
-                echo "<h1>是不是忘记在后台填写Bangumi用户名与密码呢？</h1>";
+                $zmBangumiResCode = 202;
+                $content = "是不是忘记在后台填写Bangumi用户名与密码呢？";
             }
+            $zmBangumiRes = '{
+                "messageType": "zm_bangumi_data",
+                "messageCode": ' . $zmBangumiResCode .',
+                "messageContent": {
+                    "singleItemNum": '. $singleItemNum.',
+                    "singleNavNum":'. $singleNavNum .',
+                    "mainColor": "'. $mainColor .'",
+                    "content": '. $content .'
+                    }
+                }
+                ';
+            echo $zmBangumiRes;
             die();
         }
     
