@@ -37,8 +37,8 @@ function parseBangumiData(args) {
             //TODO 提示没有追番信息
             return;
         }
-        configData.singleItemNum = (bangumiData.messageContent.singleItemNum == 0 ? 10 : bangumiData.messageContent.singleItemNum);
-        configData.singleNavNum = (bangumiData.messageContent.singleNavNum == 0 ? 3 : bangumiData.messageContent.singleNavNum);
+        configData.singleItemNum = (bangumiData.messageContent.singleItemNum <= 0 ? 10 : bangumiData.messageContent.singleItemNum);
+        configData.singleNavNum = (bangumiData.messageContent.singleNavNum <= 0 ? 3 : bangumiData.messageContent.singleNavNum);
         if(configData.singleNavNum % 2 == 0){
             configData.singleNavNum++;
         }
