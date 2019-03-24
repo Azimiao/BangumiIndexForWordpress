@@ -254,7 +254,7 @@ function getItemDom(data){
 
     let ItemImg = document.createElement("img");
     ItemImg.className = "BangumiImg";
-    ItemImg.src = item.subject.images.grid;
+    ItemImg.src = item.subject.images.common.replace("http:","");
 
     let ItemText = document.createElement("div");
     ItemText.className = "BangumiText";

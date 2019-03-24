@@ -63,14 +63,18 @@ class ZM_Bangumi{
                 $tempItemNum = stripslashes($_POST["singleItemNum"]);
                 if(is_numeric($tempItemNum))
                 {
-                    $options["singleItemNum"] = intval($tempItemNum);
+                    $options["singleItemNum"] = (intval($tempItemNum) <= 0 ? 6:intval($tempItemNum));
+                }else{
+                    $options["singleItemNum"] = 6;
                 }
             }
             if($_POST["singleNavNum"]){
                 $tempNavNum = stripslashes($_POST["singleNavNum"]);
                 if(is_numeric($tempNavNum))
                 {
-                    $options["singleNavNum"] = intval($tempNavNum);
+                    $options["singleNavNum"] = (intval($tempNavNum) <=0 ? 3: intval($tempNavNum));
+                }else{
+                    $options["singleNavNum"] = 3;
                 }
             }
             $options["color"] = stripslashes($_POST["color"]);
@@ -195,11 +199,11 @@ class ZM_Bangumi{
                 </tr>
                 <tr>
                     <td>单页番剧数量(int)：</td>
-                    <td><label><input  type="number" name="singleItemNum" rows="1"  value = "<?php echo($options['singleItemNum']); ?>"></label></td>
+                    <td><label><input  type="number" name="singleItemNum" rows="1"  value = "<?php echo(intval($options['singleItemNum']) <= 0 ? 6:$options['singleItemNum']); ?>"></label></td>
                 </tr>
                 <tr>
                     <td>单页导航标签数量(若当前页为头尾，数量可能多于该数值)：</td>
-                    <td><label><input  type="number" name="singleNavNum" rows="1"  value = "<?php echo($options['singleNavNum']); ?>"></label></td>
+                    <td><label><input  type="number" name="singleNavNum" rows="1"  value = "<?php echo(intval($options['singleNavNum']) <= 0? 3:$options['singleNavNum']); ?>"></label></td>
                 </tr>
                 <tr>
                     <td>使用<a href="//xjh.me" target="_blank">岁月小筑</a>提供的API接口：</td>
@@ -281,6 +285,7 @@ class ZM_Bangumi{
             </div>
         </div>
     </div>
+    <div style="clear:both"></div>
     <div id="bangumi_nav"><ui id="zm_bangumi_nav"></ui></div>';
     echo "
     <script>
@@ -302,8 +307,9 @@ class ZM_Bangumi{
                         let bangumiData;
                         try{
                             bangumiData = JSON.parse(xmlhttp.responseText);
-                            parseBangumiData(JSON.parse(xmlhttp.responseText));
+                            parseBangumiData(bangumiData);
                         }catch(e){
+                            console.log(xmlhttp.responseText);
                             console.log(e);
                         }
 

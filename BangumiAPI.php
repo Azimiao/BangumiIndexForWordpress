@@ -284,15 +284,15 @@
                 
             }else{
                 $zmBangumiResCode = 202;
-                $content = "是不是忘记在后台填写Bangumi用户名与密码呢？";
+                $content = "Error,是不是忘记在后台填写Bangumi用户名与密码呢？";
             }
             $zmBangumiRes = '{
                 "messageType": "zm_bangumi_data",
                 "messageCode": ' . $zmBangumiResCode .',
                 "messageContent": {
-                    "singleItemNum": '. $singleItemNum.',
-                    "singleNavNum":'. $singleNavNum .',
-                    "mainColor": "'. $mainColor .'",
+                    "singleItemNum": '. (intval($singleItemNum) <= 0?  6: $singleItemNum) .',
+                    "singleNavNum":'. (intval($singleNavNum) <= 0 ? 3: $singleNavNum) .',
+                    "mainColor": "'. ($mainColor == '' ? '#ff8c83': $mainColor) .'",
                     "content": '. $content .'
                     }
                 }

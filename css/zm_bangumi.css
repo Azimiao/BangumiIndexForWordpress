@@ -260,6 +260,7 @@
 }
 #zm_bangumi_content a:hover{
   box-shadow: none;
+  border:none;
 }
 #zm_bangumi_content a.BangumiUrl{
     display: block;
@@ -269,22 +270,24 @@
 #zm_bangumi_content img.BangumiImg{
     display: block;
     float:left;
-    width: 80px;
+    width: 65px;
     height:80px;
     margin-right: 15px;
 }
 #zm_bangumi_content .BangumiText{
     text-overflow: ellipsis;
     font-size: 16px;
-    line-height: 16px;
+    line-height: 18px;
 }
 #zm_bangumi_content .BangumiProgress{
     position: relative;
-    background-color: gray;
+    background-color: #f0f0f0;
     width: calc(100% - 100px);
     height: 20px;
     display: inline-block;
     border-radius: 4px;
+    box-shadow: 0 0 1px black;
+    color:white;
 }
 #zm_bangumi_content .ProgressText{
     position: relative;
