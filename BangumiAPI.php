@@ -2,11 +2,6 @@
     
     /** 
     *BangumiAPI文件 
-    * 
-    *声明API类并注册AJAX访问接口
-    * @author      野兔<admin@azimiao.com> 广树<eeg1412@gmail.com> 
-    * @version     1.1 
-    * @since       1.0 
     */  
 
     class BangumiAPI
@@ -69,7 +64,7 @@
             //登陆post字符串
             $postData = array('username' => $this->userName , 'password' => $this->passWord);
             //获取登陆返回json
-            $userContent = BangumiAPI::curl_post_contents($this->loginApi,$postData);
+            $userContent = BangumiAPI::http_post_contents($this->loginApi,$postData);
             //json to object
             $userData = json_decode($userContent);
             //存在error属性
@@ -93,7 +88,7 @@
             if ($this->userID == "" || $this->collectionApi == "") {
             return null;
             }
-            return BangumiAPI::curl_get_contents($this->collectionApi);
+            return BangumiAPI::http_get_contents($this->collectionApi);
         }
         //格式化收藏
         public function ParseCollection($content = null)
@@ -190,39 +185,19 @@
             }
         }
         //get获取内容
-        private static function curl_get_contents($_url)
+        private static function http_get_contents($_url)
         {
-            $myCurl = curl_init($_url);
-            curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0); //强制协议为1.0
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array("Expect:")); //头部要送出'Expect: '
-            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 ); //强制使用IPV4协议解析域名
-            //不验证证书
-            curl_setopt($myCurl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($myCurl, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($myCurl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($myCurl,  CURLOPT_HEADER, false);
-            //获取
-            $content = curl_exec($myCurl);
-            //关闭
-            curl_close($myCurl);
-            return $content;
+            $m_req = wp_remote_get($_url);
+            $m_res = wp_remote_retrieve_body($m_req);
+            return $m_res;
         }
         //post获取内容
-        private static function curl_post_contents($_url,$_postdata)
+        private static function http_post_contents($_url,$_postBody  = array())
         {
-            $myCurl = curl_init($_url);
-            curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0); //强制协议为1.0
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array("Expect:")); //头部要送出'Expect: '
-            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 ); //强制使用IPV4协议解析域名
-            //不验证证书
-            curl_setopt($myCurl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($myCurl, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($myCurl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($myCurl, CURLOPT_POST, 1);
-            curl_setopt($myCurl, CURLOPT_POSTFIELDS, $_postdata);
-            $output = curl_exec($myCurl);
-            curl_close($myCurl);
-            return $output;
+            $_postdata  = array('body' => $_postBody);
+            $m_req = wp_remote_post($_url,$_postdata);
+            $m_res = wp_remote_retrieve_body($m_req);
+            return $m_res;
         }
     }
         //ajax处理函数
