@@ -272,10 +272,10 @@
                 "messageType": "zm_bangumi_data",
                 "messageCode": ' . $zmBangumiResCode .',
                 "messageContent": {
-                    "singleItemNum": '. (intval($singleItemNum) <= 0?  6: $singleItemNum) .',
-                    "singleNavNum":'. (intval($singleNavNum) <= 0 ? 3: $singleNavNum) .',
-                    "mainColor": "'. ($mainColor == '' ? '#ff8c83': $mainColor) .'",
-                    "content": ' . $content  . '
+                    "singleItemNum": '. (intval($singleItemNum) <= 0?  6 : $singleItemNum) .',
+                    "singleNavNum":'. (intval($singleNavNum) <= 0 ? 3 : $singleNavNum) .',
+                    "mainColor": "'. (empty($mainColor) ? '#ff8c83': $mainColor) .'",
+                    "content": ' . (empty($content) ? "[]" : $content)  . '
                     }
                 }
                 ';
