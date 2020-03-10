@@ -82,14 +82,16 @@ class ZM_Bangumi{
             echo "<div id='message' class='updated fade'><p><strong>数据已更新</strong></p></div>";
         }else if(isset($_POST["zm_bangumi_clear"])){
             //删除
-            $cachePath = __DIR__ . "/BangumiCache/";
+            $cachePath = plugin_dir_path( __FILE__ ) . "BangumiCache/";
+            if(is_dir($cachePath)){
             //echo $cachePath;
-            $allCaches = scandir($cachePath);
-            foreach($allCaches as $val){
-                if($val != "." && $val != "..")
-                {
-                    if(!is_dir($cachePath.$val)){
-                        unlink($cachePath.$val);
+                $allCaches = scandir($cachePath);
+                foreach($allCaches as $val){
+                    if($val != "." && $val != "..")
+                    {
+                        if(!is_dir($cachePath.$val)){
+                            unlink($cachePath.$val);
+                        }
                     }
                 }
             }

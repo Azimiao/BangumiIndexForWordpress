@@ -52,8 +52,7 @@
             }
             if ($_userName == null || $_passWord == null) {
             //程序返回
-            echo "初始化参数错误！";
-            return;
+            return "初始化参数错误！";
             }
             $this->userName = $_userName;
             $this->passWord = $_passWord;
@@ -70,9 +69,8 @@
             //存在error属性
             if (property_exists($userData, "error")) {
                 //输出错误信息
-                echo "登陆错误：" . $userData->error;
+                return "登陆错误：" . $userData->error;
                 //程序返回
-                return;
             }
             //初始化
             $this->userID = $userData->id;
@@ -81,6 +79,7 @@
             }
             //初始化收藏字符串
             $this->collectionApi = BangumiAPI::$apiUrl . "/user/" . $this->userID ."/collection?cat=playing";
+            return true;
         }
         //获取收藏json
         public function GetCollection()
@@ -235,26 +234,34 @@
                         {
                             mkdir ($cachePath,0755,true);
                         }
-                        $bangum->init($userId,$password,$mAPI);
-                        //删除之前存在的缓存
-                        $allCaches = scandir($cachePath);
-                        foreach($allCaches as $val){
-                            if($val != "." && $val != "..")
-                            {
-                                if(!is_dir($cachePath.$val)){
-                                    unlink($cachePath.$val);
+                        $loginRes = $bangum->init($userId,$password,$mAPI);
+                        if(!($loginRes === true)){
+                            $content = '"' . $loginRes . '"';
+                        }else{
+                            //删除之前存在的缓存
+                            $allCaches = scandir($cachePath);
+                            foreach($allCaches as $val){
+                                if($val != "." && $val != "..")
+                                {
+                                    if(!is_dir($cachePath.$val)){
+                                        unlink($cachePath.$val);
+                                    }
                                 }
                             }
-                        }
 
-                        $myfile = fopen($fullPath, "w");
-                        $content = $bangum->GetCollection();
-                        fwrite($myfile,$content);
-                        fclose($myfile);
+                            $myfile = fopen($fullPath, "w");
+                            $content = $bangum->GetCollection();
+                            fwrite($myfile,$content);
+                            fclose($myfile);
+                        }
                     }
                 }else{
-                    $bangum->init($userId,$password,$mAPI);
-                    $content = $bangum->GetCollection();
+                    $loginRes = $bangum->init($userId,$password,$mAPI);
+                    if(!($loginRes === true)){
+                        $content = '"' . $loginRes .'"';
+                    }else{
+                        $content = $bangum->GetCollection();
+                    }
                 }
                 
             }else{
@@ -268,7 +275,7 @@
                     "singleItemNum": '. (intval($singleItemNum) <= 0?  6: $singleItemNum) .',
                     "singleNavNum":'. (intval($singleNavNum) <= 0 ? 3: $singleNavNum) .',
                     "mainColor": "'. ($mainColor == '' ? '#ff8c83': $mainColor) .'",
-                    "content": '. $content .'
+                    "content": ' . $content  . '
                     }
                 }
                 ';
