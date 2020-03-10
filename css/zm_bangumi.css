@@ -218,19 +218,20 @@
 
 /* 主窗口 */
 #zm_bangumi_content{
-    display: block;
+    display: flex;
     width: 100%;
     overflow: auto;
-    margin-right: auto;
-    margin-left: auto;
     padding: 10px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 #zm_bangumi_content .BangumiItem{
     display: block;
-    float: left;
     height: 90px;
     width: 45%;
     min-width: 280px;
+    max-width: 320px;
     overflow: hidden;
     padding: 5px;
     color:#14191e;
@@ -275,6 +276,7 @@
     margin-right: 15px;
 }
 #zm_bangumi_content .BangumiText{
+  overflow: hidden;
     text-overflow: ellipsis;
     font-size: 16px;
     line-height: 18px;
@@ -286,7 +288,7 @@
     height: 20px;
     display: inline-block;
     border-radius: 4px;
-    box-shadow: 0 0 1px black;
+    box-shadow: 0 0 1px #acacac;
     color:white;
 }
 #zm_bangumi_content .ProgressText{
@@ -296,6 +298,8 @@
     text-indent: .5em;
     font-size: 16px;
     line-height: 20px;
+    color:#0d0d0d70;
+    font-weight: bold;
 }
 #zm_bangumi_content .ProgressFG{
     position: absolute;
@@ -306,19 +310,12 @@
     border-radius: 4px;
 }
 
-@media screen and (max-width:600px){
-    #zm_bangumi_content .BangumiItem{
-        float: none;
-        width: 90%;
-        /* min-width:300px; */
-        margin-right:auto;
-        margin-left: auto;
-    }
-}
+
 
 /* 导航样式 */
 #bangumi_nav{
     margin:0 auto;
+    width: 100%;
     text-align: center;
 }
 #zm_bangumi_nav{
