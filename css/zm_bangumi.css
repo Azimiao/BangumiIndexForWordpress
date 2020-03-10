@@ -274,6 +274,7 @@
     width: 65px;
     height:80px;
     margin-right: 15px;
+    padding: 0;
 }
 #zm_bangumi_content .BangumiText{
   overflow: hidden;
