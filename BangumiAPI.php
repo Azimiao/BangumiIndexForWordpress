@@ -186,14 +186,17 @@
         //get获取内容
         private static function http_get_contents($_url)
         {
-            $m_req = wp_remote_get($_url);
+            $m_req = wp_remote_get($_url,array("user-agent"=>"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0"));
             $m_res = wp_remote_retrieve_body($m_req);
             return $m_res;
         }
         //post获取内容
         private static function http_post_contents($_url,$_postBody  = array())
         {
-            $_postdata  = array('body' => $_postBody);
+            $_postdata  = array(
+                "user-agent"=>"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0",
+                'body' => $_postBody
+            );
             $m_req = wp_remote_post($_url,$_postdata);
             $m_res = wp_remote_retrieve_body($m_req);
             return $m_res;

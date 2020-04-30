@@ -182,7 +182,7 @@ class ZM_Bangumi{
 
                 <tr>
                     <td>没有Bangumi账号？</td>
-                    <td><label><a href="http://bangumi.tv/signup" target="_blank">去注册一个！</a></label></td>
+                    <td><label><a href="https://bgm.tv/signup" target="_blank">去注册一个！</a></label></td>
                 </tr>
 
                 <tr>
